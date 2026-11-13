@@ -6,20 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('solicituds', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('grupo_id')->constrained('grupos')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('miembro_reclamado_id')->nullable()->constrained('miembros')->nullOnDelete();
+            $table->string('estado')->default('pendiente'); // pendiente, aprobada, rechazada
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('solicituds');

@@ -6,20 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('gastos', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('grupo_id')->constrained('grupos')->cascadeOnDelete();
+            $table->foreignId('pagado_por_miembro_id')->constrained('miembros')->cascadeOnDelete();
+            $table->string('comercio')->nullable();
+            $table->integer('subtotal');
+            $table->integer('propina')->default(0);
+            $table->integer('total');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('gastos');

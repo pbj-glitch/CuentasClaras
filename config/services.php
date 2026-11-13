@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'groq' => [
+    'key' => env('GROQ_API_KEY'),
+    'vision_model' => env('GROQ_VISION_MODEL', 'qwen/qwen3.8-27b'),
+    'text_model' => env('GROQ_TEXT_MODEL', 'openai/gpt-oss-120b'),
+    ],
+
 ];
