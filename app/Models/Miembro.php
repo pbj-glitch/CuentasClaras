@@ -40,6 +40,12 @@ class Miembro extends Model
         return mb_strtoupper(mb_substr($this->nombre_alias, 0, 1));
     }
 
+    /** Color del avatar (1 a 6), fijo para cada integrante. */
+    public function color(): int
+    {
+        return $this->id % 6 + 1;
+    }
+
     public function tieneCuenta(): bool
     {
         return $this->user_id !== null;

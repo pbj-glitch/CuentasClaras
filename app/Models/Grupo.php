@@ -112,6 +112,11 @@ class Grupo extends Model
         return $this->miembros->firstWhere('user_id', $user->id);
     }
 
+    public function inicial(): string
+    {
+        return mb_strtoupper(mb_substr($this->nombre, 0, 1));
+    }
+
     public function total(): int
     {
         return (int) $this->gastos->sum('total');
