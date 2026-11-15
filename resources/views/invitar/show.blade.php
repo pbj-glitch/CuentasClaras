@@ -28,8 +28,12 @@
 <div class="cols">
 <div class="col-side">
 <div class="qrcard">
-    <div class="g">{{ $grupo->nombre }}</div>
-    {{-- Aquí va el QR que lleva a $link (QrService) --}}
+    <div class="g"><span>{{ $grupo->inicial() }}</span> {{ $grupo->nombre }}</div>
+    <div class="sub">Escanea con la cámara para unirte al grupo</div>
+    <div class="qrbox">
+        {!! \App\Services\QrService::svg($link) !!}
+        <span class="logo">$</span>
+    </div>
     <div class="code-lbl">Código del grupo</div>
     <div class="code">
         @foreach (str_split(str_replace('-', '', $grupo->codigo_invitacion)) as $i => $letra)

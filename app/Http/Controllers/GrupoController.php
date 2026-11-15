@@ -97,4 +97,23 @@ class GrupoController extends Controller
             'transferencias' => $grupo->transferencias(),
         ]);
     }
+
+    public function estadoJson(Grupo $grupo)
+    {
+        $this->miembroActual($grupo);
+
+        $version = md5( json_encode([
+            'gastos_count' => $grupo->gastos()->count(),
+            'gastos_max' => $grupo->gastos()->max('update_at'),
+            'pagos_count' => $grupo->pagos()->count(),
+            'pagos_max' => $grupo->pagos()->max('update_at'),
+            'miembros_count' => $grupo->miembros()->count(),
+            'miembros_max' => $grupo->miembros()->max('update_at'),
+            'solicitudes_pendientes' => $grupo->solicitudes()->where('estado', 'pendiente')->count(),
+        ]));
+
+        return response()->json([
+            'version' => $version,
+        ]);
+    }
 }
