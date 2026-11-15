@@ -2,19 +2,25 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Services\GroqService;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class GroqServiceTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
+    public function test_analizar_texto_devuelve_el_json_de_la_respuesta(): void
     {
-        $response = $this->get('/');
+        config(['services.groq.key' => 'clave-de-prueba', 'services.groq.text_model' => 'modelo-de-prueba']);
+        Http::fake([
+            'api.groq.com/*' => Http::response([
+                'choices' => [['message' => ['content' => '{"comercio":"La Pica","total":12000}']]],
+            ]),
+        ]);
 
-        $response->assertStatus(200);
+        $resultado = (new GroqService)->analizarTexto('pagué 12 lucas en La Pica');
+
+        $this->assertSame(['comercio' => 'La Pica', 'total' => 12000], $resultado);
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer clave-de-prueba')
+            && $request['model'] === 'modelo-de-prueba');
     }
 }

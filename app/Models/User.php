@@ -7,6 +7,8 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -29,8 +31,15 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function miembros(): \Illuminate\Database\Eloquent\Relations\HasMany
+
+    public function miembros(): HasMany
     {
-    return $this->hasMany(Miembro::class);
+        return $this->hasMany(Miembro::class);
+    }
+
+    /** Los grupos donde participa, a través de su integrante en cada uno. */
+    public function grupos(): BelongsToMany
+    {
+        return $this->belongsToMany(Grupo::class, 'miembros')->withTimestamps()->latest('grupos.updated_at');
     }
 }
