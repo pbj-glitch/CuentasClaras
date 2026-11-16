@@ -39,7 +39,7 @@ class GroqService
             $response = Http::withToken(config('services.groq.key'))
             ->timeout(45)
             ->post('https://api.groq.com/openai/v1/chat/completions', [
-                'model' => config('services.groq.viison_model'),
+                'model' => config('services.groq.vision_model'),
                 'response_format' => ['type' => 'json_object'],
                 'messages' => [
                     [

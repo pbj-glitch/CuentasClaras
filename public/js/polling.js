@@ -20,7 +20,7 @@
 
             if (versionActual === null) {
                 versionActual = data.version;
-            } else if (DataTransfer.version && data.version !== versionActual) {
+            } else if (data.version && data.version !== versionActual) {
                 recargando = true;
                 mostrarAviso('Hay cambios nuevos en el grupo. Actualizando...');
                 setTimeout(() => window.location.reload(), 900);

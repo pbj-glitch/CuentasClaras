@@ -104,11 +104,11 @@ class GrupoController extends Controller
 
         $version = md5( json_encode([
             'gastos_count' => $grupo->gastos()->count(),
-            'gastos_max' => $grupo->gastos()->max('update_at'),
+            'gastos_max' => $grupo->gastos()->max('updated_at'),
             'pagos_count' => $grupo->pagos()->count(),
-            'pagos_max' => $grupo->pagos()->max('update_at'),
+            'pagos_max' => $grupo->pagos()->max('updated_at'),
             'miembros_count' => $grupo->miembros()->count(),
-            'miembros_max' => $grupo->miembros()->max('update_at'),
+            'miembros_max' => $grupo->miembros()->max('updated_at'),
             'solicitudes_pendientes' => $grupo->solicitudes()->where('estado', 'pendiente')->count(),
         ]));
 

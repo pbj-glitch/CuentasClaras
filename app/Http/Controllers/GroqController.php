@@ -46,7 +46,7 @@ PROMPT;
             $extra = $request->filled('texto') ? "\nInstrucción adicional del usuario:".$request->input('texto') : '';
             $respuesta = $groq->analizarImagen($base64, $archivo->getMimeType(), $instrucciones.$extra);
         } else {
-            $respuesta = $groq->analizarTexto($instrucciones. "\n\nTexto del usuario:".request->input('texto'));
+            $respuesta = $groq->analizarTexto($instrucciones."\n\nTexto del usuario: ".$request->input('texto'));
         }
 
         if (empty($respuesta) || empty($respuesta['items']) || ! is_array($respuesta['items'])) {
