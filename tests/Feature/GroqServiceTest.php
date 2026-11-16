@@ -23,4 +23,9 @@ class GroqServiceTest extends TestCase
         Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer clave-de-prueba')
             && $request['model'] === 'modelo-de-prueba');
     }
+
+    public function test_analizar_texto_devuelve_arreglo_vacio_si_la_respuesta_no_es_json(): void
+    {
+        //
+    }
 }

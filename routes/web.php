@@ -8,6 +8,7 @@ use App\Http\Controllers\MiembroController;
 use App\Http\Controllers\PagoController;
 use App\Http\Controllers\SolicitudController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroqController;
 
 Route::get('/', fn () => redirect()->route('grupos.index'));
 
@@ -28,6 +29,7 @@ Route::middleware('auth')->group(function () {
     // Gastos (carga manual; la lectura de boletas con IA va en GroqController)
     Route::get('/grupos/{grupo}/gastos/nuevo', [GastoController::class, 'create'])->name('gastos.create');
     Route::post('/grupos/{grupo}/gastos', [GastoController::class, 'store'])->name('gastos.store');
+    Route::post('grupos/{grupo}/gastos/ia', [GroqController::class, 'analizar'])->name('gastos.ia');
 
     // Integrantes sin cuenta
     Route::post('/grupos/{grupo}/miembros', [MiembroController::class, 'store'])->name('miembros.store');

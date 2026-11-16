@@ -13,12 +13,21 @@
 
 @section('content')
 @php $items = old('items', $items); @endphp
-
+<form method="POST" action="{{ route('gastos.ia', $grupo) }}" enctype="multipart/form-data" class="ask" id="form-ia">
+    @csrf
+    <div class="lbl">Completar con IA (foto de boleta o texto)</div>
+    <textarea name="texto" placeholder="Ej: Pagué 15 lucas de bencina entre todos, o: 2 pizzas de 12.000 entre todos y 2 cervezas de 4.000 para mí">{{ old('texto') }}</textarea>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap">
+        <label class="btn ghost sm" style="width:auto;padding:0 14px;margin:0;cursor:pointer">
+            <span id="nombre-boleta">Subir foto de boleta</span>
+            <input type="file" name="boleta" accept="image/*" style="display:none" onchange="document.getElementById('nombre-boleta').textContent = this.files[0]?.name || 'Subir foto de boleta'">
+        </label>
+        <button type="submit" class="btn ai sm" style="flex:1;margin:0" id="btn-ia">Analizar con IA</button>
+    </div>
+</form>
 <form method="POST" action="{{ route('gastos.store', $grupo) }}" id="form-gasto">
     @csrf
     <div class="pad">
-        {{-- Aquí va la opción de leer la boleta con IA (foto o texto) → GroqController --}}
-
         <div class="opts">
             <div class="opt full">
                 <small>Comercio o descripción</small>
