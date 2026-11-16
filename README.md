@@ -1,58 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Cuentas Claras
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplicación web en **Laravel 13 (PHP 8.3+)** para dividir gastos grupales al peso chileno (CLP), con reparto ítem por ítem, cálculo proporcional de propina, lectura de boletas y gastos con **Inteligencia Artificial (Groq)**, invitación por **código QR** y actualización en **tiempo real**.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ¿Qué hace la aplicación?
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Grupos e integrantes sin cuenta**: Crea un grupo (ej. *"Viaje a Pucón"*) y agrega de inmediato a todos los amigos, aunque todavía no se hayan registrado en la app.
+2. **Carga de gastos manual o con IA (Groq)**:
+   - **Con IA**: Escribe una frase natural (*"pagué 15 lucas de bencina entre todos"*) o sube la **foto de una boleta** y la IA rellenará automáticamente el comercio, quién pagó, la propina, los ítems, precios y quién consumió cada cosa.
+   - **Manual**: Agrega ítems, cantidades, precios unitarios, atajos de propina (0%, 10%, 15%) y marca quiénes participaron en cada producto.
+3. **Reparto exacto al peso (`Liquidacion`)**:
+   - Cada ítem se divide entre quienes lo consumieron.
+   - La propina se cobra en proporción a lo que consumió cada persona.
+   - El redondeo se ajusta automáticamente para que la suma de las partes cuadre exactamente con el total al peso chileno.
+4. **Saldos y transferencias mínimas**:
+   - Muestra el balance de cada integrante (quién está a favor y quién debe).
+   - Calcula el menor número de transferencias posibles para saldar todas las deudas del grupo, permite **marcar como pagado** (o deshacer) y compartir el cobro directo por **WhatsApp**.
+5. **Invitación con QR y reclamo de identidad**:
+   - Cada grupo genera un código único (ej. `PUC-206`) y un **código QR** en SVG (`BaconQrCode`).
+   - Al entrar con el link/QR o escribir el código en **Unirse**, el usuario puede elegir *"Soy Caro"* (un integrante sin cuenta creado antes) para quedarse con su historial y saldo.
+6. **Tiempo real (Polling)**:
+   - Las vistas del grupo consultan cambios cada 3 segundos (`/grupos/{grupo}/estado`) y avisan automáticamente cuando alguien agrega un gasto, registra un pago o envía una solicitud.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Requisitos previos
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **PHP 8.3 o superior** (con extensiones `sqlite3`, `pdo_sqlite`, `mbstring`, `openssl`, `curl`).
+- **Composer**.
+- *(Recomendado en Windows)*: Instalar **[Laravel Herd para Windows](https://herd.laravel.com/windows)**, que incluye PHP y Composer listos para usar.
+- **No requiere Node.js ni npm** (el frontend usa Blade + CSS/JS nativos).
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## Instalación paso a paso
 
-## Agentic Development
+### En Windows (CMD)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+```cmd
+:: 1. Instalar dependencias de PHP
+composer install
 
-```bash
-composer require laravel/boost --dev
+:: 2. Copiar archivo de configuración y generar clave de la app
+copy .env.example .env
+php artisan key:generate
 
-php artisan boost:install
+:: 3. Crear base de datos SQLite y cargar tablas + datos de demostración
+type nul > database\database.sqlite
+php artisan migrate:fresh --seed
+
+:: 4. Levantar el servidor local
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### En macOS / Linux / Git Bash
 
-## Contributing
+```bash
+# 1. Instalar dependencias de PHP
+composer install
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# 2. Copiar archivo de configuración y generar clave de la app
+cp .env.example .env
+php artisan key:generate
 
-## Code of Conduct
+# 3. Crear base de datos SQLite y cargar tablas + datos de demostración
+touch database/database.sqlite
+php artisan migrate:fresh --seed
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# 4. Levantar el servidor local
+php artisan serve
+```
 
-## Security Vulnerabilities
+Una vez iniciado el servidor, abre en tu navegador: **http://127.0.0.1:8000**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## Configurar la Inteligencia Artificial (Groq)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Para usar el botón **"Analizar con IA"** (lectura de texto o fotos de boletas) al crear un gasto:
+
+1. Obtén una API Key gratuita en [console.groq.com](https://console.groq.com).
+2. Abre el archivo `.env` en la raíz del proyecto y agrega tu clave en:
+   ```env
+   GROQ_API_KEY=gsk_tu_clave_aqui
+   GROQ_VISION_MODEL=meta-llama/llama-4-scout-17b-16e-instruct
+   GROQ_TEXT_MODEL=openai/gpt-oss-120b
+   ```
+
+---
+
+## Usuarios de prueba (cargados con `--seed`)
+
+Al ejecutar `php artisan migrate:fresh --seed`, puedes iniciar sesión inmediatamente con cualquiera de estas cuentas:
+
+| Nombre | Correo electrónico | Contraseña | Rol en la demo |
+| :--- | :--- | :--- | :--- |
+| **Vicente** | `Vicente@cuentasclaras.cl` | `contraseña` | Creador de *Viaje a Pucón* y miembro de *Asado del viernes* |
+| **Maria** | `Maria@cuentasclaras.cl` | `contraseña` | Creadora de *Asado del viernes* y miembro de *Viaje a Pucón* |
+| **Matias** | `Matias@cuentasclaras.cl` | `contraseña` | Tiene una solicitud pendiente para unirse a *Viaje a Pucón* reclamando ser "Benja" |
+
+### Códigos de grupos de prueba:
+- **`PUC-206`**: Grupo *"Viaje a Pucón"* (incluye gastos con propina, un pago registrado, integrantes sin cuenta `Caro` y `Benja`, y una solicitud pendiente de aprobación en la pestaña **Invitar**).
+- **`ASA-999`**: Grupo *"Asado del viernes"*.
+
+---
+
+## Ejecutar las pruebas automatizadas
+
+El proyecto cuenta con **27 tests** (unitarios y de integración) que verifican el reparto de gastos, redondeo al peso, saldos, transferencias mínimas, permisos de grupos y llamadas a Groq simuladas con `Http::fake()`:
+
+```bash
+php artisan test
+```
